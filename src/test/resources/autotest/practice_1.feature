@@ -1,5 +1,5 @@
 # language: ru
-Функция: Playwright Tests
+Функция: Playwright Tests Practice 1
 
   Сценарий: Тестирование каталога товаров
     Дано Открывается главная страница магазина

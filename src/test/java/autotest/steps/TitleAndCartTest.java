@@ -3,14 +3,17 @@ package autotest.steps;
 import autotest.config.PlaywrightConfig;
 import autotest.locators.Locators;
 import autotest.pages.PageObject;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
-import static com.microsoft.playwright.options.LoadState.LOAD;
+import java.util.Objects;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.*;
 import static org.junit.Assert.assertTrue;
 
 public class TitleAndCartTest {
@@ -43,6 +46,34 @@ public class TitleAndCartTest {
                 .getPage()
                 .locator(Locators.CATALOG_ITEMS_LIST)
                 .count() > itemsCount);
+    }
+
+    @And("Проверить наличие элемента {string}")
+    public void iCheckExistElement(String element) {
+        Locator locator = null;
+        if (element.equalsIgnoreCase("футер"))
+            locator = pageObject
+                    .getPage()
+                    .locator(Locators.FOOTER_SELECTOR);
+        assertTrue(Objects.requireNonNull(locator).isEnabled());
+    }
+
+    @And("Проверить видимость элемента {string}")
+    public void iCheckVisibleElement(String element) {
+        Locator locator = null;
+        if (element.equalsIgnoreCase("футер"))
+            locator = pageObject
+                    .getPage()
+                    .locator(Locators.FOOTER_SELECTOR);
+        assertTrue(Objects.requireNonNull(locator).isVisible());
+    }
+
+    @And("Проверить что в футере присутствуют ссылки:")
+    public void iCheckLinks(DataTable dataTable) {
+        dataTable.asList().forEach(name ->
+            assertThat(pageObject
+                    .getPage()
+                    .locator(Locators.FOOTER_SELECTOR)).containsText(name));
     }
 
 }
