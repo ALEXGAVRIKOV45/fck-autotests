@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TitleAndCartTest {
@@ -51,29 +52,69 @@ public class TitleAndCartTest {
     @And("Проверить наличие элемента {string}")
     public void iCheckExistElement(String element) {
         Locator locator = null;
-        if (element.equalsIgnoreCase("футер"))
-            locator = pageObject
-                    .getPage()
-                    .locator(Locators.FOOTER_SELECTOR);
+        switch (element) {
+            case "Футер" ->
+                    locator = pageObject
+                            .getPage()
+                            .locator(Locators.FOOTER_SELECTOR);
+            case "Пагинация" ->
+                    locator = pageObject
+                            .getPage()
+                            .locator(Locators.CATALOG_PAGINATION);
+            default -> throw new IllegalArgumentException("Не найден элемент:" + element);
+        }
         assertTrue(Objects.requireNonNull(locator).isEnabled());
     }
 
     @And("Проверить видимость элемента {string}")
     public void iCheckVisibleElement(String element) {
         Locator locator = null;
-        if (element.equalsIgnoreCase("футер"))
-            locator = pageObject
-                    .getPage()
-                    .locator(Locators.FOOTER_SELECTOR);
+        switch (element) {
+            case "Футер" ->
+                locator = pageObject
+                        .getPage()
+                        .locator(Locators.FOOTER_SELECTOR);
+            case "Пагинация" ->
+                locator = pageObject
+                        .getPage()
+                        .locator(Locators.CATALOG_PAGINATION);
+            default -> throw new IllegalArgumentException("Не найден элемент:" + element);
+        }
         assertTrue(Objects.requireNonNull(locator).isVisible());
     }
 
     @And("Проверить что в футере присутствуют ссылки:")
     public void iCheckLinks(DataTable dataTable) {
         dataTable.asList().forEach(name ->
-            assertThat(pageObject
-                    .getPage()
-                    .locator(Locators.FOOTER_SELECTOR)).containsText(name));
+                assertThat(pageObject
+                        .getPage()
+                        .locator(Locators.FOOTER_SELECTOR)).containsText(name));
     }
 
+    @And("Прокручивать страницу вниз до появления {string}")
+    public void iScrollToElement(String element) {
+        Locator locator = null;
+        if (element.equalsIgnoreCase("пагинация"))
+            locator = pageObject
+                    .getPage()
+                    .locator(Locators.CATALOG_PAGINATION);
+        assert locator != null;
+        locator.scrollIntoViewIfNeeded();
+    }
+
+    @And("Проверить видимость номера {string} в пагинации")
+    public void iCheckForThePaginationNumber(String number) {
+        assertTrue(pageObject
+                .getPage()
+                .locator(Locators.CATALOG_PAGINATION_LINK)
+                .filter(new Locator.FilterOptions().setHasText(number)).isVisible());
+    }
+
+    @And("Проверить что в блоке пагинации видно {int} элементов")
+    public void iCheckVisiblePagination(int itemsCount) {
+        assertEquals(pageObject
+                .getPage()
+                .locator(Locators.CATALOG_PAGINATION_LINK)
+                .count(), itemsCount);
+    }
 }

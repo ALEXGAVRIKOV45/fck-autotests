@@ -10,4 +10,6 @@ public class Locators {
     public static final String PAGE_LINK_SELECTOR = PAGINATION_SELECTOR + " .pagination__link";
     public static final String CART_LINK_SELECTOR = "a.header__cart";
     public static final String CATALOG_ITEMS_LIST = "ul.catalog__list > li.catalog__item";
+    public static final String CATALOG_PAGINATION = "ul.catalog__pagination";
+    public static final String CATALOG_PAGINATION_LINK = "a.pagination__link";
 }
